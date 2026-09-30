@@ -11,9 +11,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
-# NEXT_PUBLIC_* vars are inlined into the client bundle at build time
-ARG NEXT_PUBLIC_API_GATEWAY_URL=http://localhost:8000
-ENV NEXT_PUBLIC_API_GATEWAY_URL=$NEXT_PUBLIC_API_GATEWAY_URL
+# in-cluster gateway address used by the /api rewrite (service name works in Compose and k8s)
+ARG API_GATEWAY_INTERNAL_URL=http://api-gateway:8000
+ENV API_GATEWAY_INTERNAL_URL=$API_GATEWAY_INTERNAL_URL
 RUN npm run build
 
 # ---------- runtime: standalone output only ----------
