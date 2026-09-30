@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-ink-950 text-stone-100 antialiased;
+  }
+
+  ::selection {
+    @apply bg-aka-bright/80 text-white;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-2.5 bg-ink-950;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-ink-700;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-ink-600;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-kin-light via-kin to-kin-dark bg-clip-text text-transparent;
+  }
+  .text-gradient-red {
+    @apply bg-gradient-to-r from-aka-bright to-aka-deep bg-clip-text text-transparent;
+  }
+}
+
+/* Kanji watermark used in hero/auth backgrounds */
+.kanji-watermark {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  font-family: 'Zen Old Mincho', serif;
+  color: rgba(201, 162, 39, 0.05);
+  line-height: 1;
+}
+
+/* Subtle sun-disc glow */
+.sun-disc {
+  background: radial-gradient(circle at center, rgba(220, 38, 38, 0.35) 0%, rgba(220, 38, 38, 0.12) 35%, transparent 70%);
+}

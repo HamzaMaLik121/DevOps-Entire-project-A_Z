@@ -1,0 +1,292 @@
+# AnimeThreads — full stack in one file.
+# Layout: frontend/ (Next.js) · backend/ (8 microservices) · db/ (init SQL)
+#
+#   Up:     docker compose up -d --build
+#   Down:   docker compose down
+#   Nuke:   docker compose down -v   (wipes DB/Redis data too)
+#
+# URLs after boot:
+#   Web app:      http://localhost:3000
+#   API gateway:  http://localhost:8000
+#   Postgres:     localhost:5432 (postgres/postgres)
+#   Redis:        localhost:6379
+
+name: animethreads
+
+services:
+  # ------------------------- infrastructure -------------------------
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: animethreads
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # runs on first boot (empty volume): creates one schema per service
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d animethreads"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+  # --------------------- schema migrations (one-shot) ---------------------
+  # Each runs `prisma db push` and exits; runtimes below wait for them.
+  # (In production/GitOps these become CI jobs or k8s Jobs.)
+  migrate-auth:
+    build:
+      context: ./backend
+      dockerfile: auth-service/Dockerfile
+      target: migrator
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/animethreads?schema=auth
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: "no"
+
+  migrate-product:
+    build:
+      context: ./backend
+      dockerfile: product-service/Dockerfile
+      target: migrator
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/animethreads?schema=product
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: "no"
+
+  migrate-order:
+    build:
+      context: ./backend
+      dockerfile: order-service/Dockerfile
+      target: migrator
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/animethreads?schema=order
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: "no"
+
+  migrate-payment:
+    build:
+      context: ./backend
+      dockerfile: payment-service/Dockerfile
+      target: migrator
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/animethreads?schema=payment
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: "no"
+
+  migrate-inventory:
+    build:
+      context: ./backend
+      dockerfile: inventory-service/Dockerfile
+      target: migrator
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/animethreads?schema=inventory
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: "no"
+
+  # ------------------------- microservices --------------------------
+  auth-service:
+    build:
+      context: ./backend
+      dockerfile: auth-service/Dockerfile
+      target: runtime
+    environment: &svc-env
+      NODE_ENV: production
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me}
+      REDIS_URL: redis://redis:6379
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/animethreads?schema=auth
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      migrate-auth: { condition: service_completed_successfully }
+    ports:
+      - "3001:3001"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3001/auth/validate?token=x >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  product-service:
+    build:
+      context: ./backend
+      dockerfile: product-service/Dockerfile
+      target: runtime
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/animethreads?schema=product
+    depends_on:
+      postgres: { condition: service_healthy }
+      migrate-product: { condition: service_completed_successfully }
+    ports:
+      - "3002:3002"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3002/products/categories >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  cart-service:
+    build:
+      context: ./backend
+      dockerfile: cart-service/Dockerfile
+    environment:
+      <<: *svc-env
+      DATABASE_URL: ""
+    depends_on:
+      redis: { condition: service_healthy }
+    ports:
+      - "3003:3003"
+    healthcheck:
+      # cart/order/payment expose no unauthenticated GET; TCP probe instead
+      test: ["CMD-SHELL", "nc -z localhost 3003 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  order-service:
+    build:
+      context: ./backend
+      dockerfile: order-service/Dockerfile
+      target: runtime
+    environment:
+      <<: *svc-env
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/animethreads?schema=order
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      migrate-order: { condition: service_completed_successfully }
+    ports:
+      - "3004:3004"
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 3004 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  payment-service:
+    build:
+      context: ./backend
+      dockerfile: payment-service/Dockerfile
+      target: runtime
+    environment:
+      <<: *svc-env
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/animethreads?schema=payment
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      migrate-payment: { condition: service_completed_successfully }
+    ports:
+      - "3005:3005"
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 3005 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  inventory-service:
+    build:
+      context: ./backend
+      dockerfile: inventory-service/Dockerfile
+      target: runtime
+    environment:
+      <<: *svc-env
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/animethreads?schema=inventory
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      migrate-inventory: { condition: service_completed_successfully }
+    ports:
+      - "3006:3006"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3006/health >/dev/null 2>&1 || true"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  notification-service:
+    build:
+      context: ./backend
+      dockerfile: notification-service/Dockerfile
+    environment:
+      <<: *svc-env
+      DATABASE_URL: ""
+    depends_on:
+      redis: { condition: service_healthy }
+    ports:
+      - "3007:3007"
+    restart: unless-stopped
+
+  # ------------------------------ edge ------------------------------
+  api-gateway:
+    build:
+      context: ./backend
+      dockerfile: api-gateway/Dockerfile
+      target: runtime
+    environment:
+      NODE_ENV: production
+      AUTH_SERVICE_URL: http://auth-service:3001
+      PRODUCT_SERVICE_URL: http://product-service:3002
+      CART_SERVICE_URL: http://cart-service:3003
+      ORDER_SERVICE_URL: http://order-service:3004
+      PAYMENT_SERVICE_URL: http://payment-service:3005
+      INVENTORY_SERVICE_URL: http://inventory-service:3006
+    depends_on:
+      - auth-service
+      - product-service
+      - cart-service
+      - order-service
+      - payment-service
+      - inventory-service
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8000/health >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  web:
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_GATEWAY_URL: http://localhost:8000
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: runtime
+      args:
+        NEXT_PUBLIC_API_GATEWAY_URL: http://localhost:8000
+    depends_on:
+      api-gateway: { condition: service_started }
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+volumes:
+  pgdata:

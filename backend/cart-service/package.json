@@ -1,0 +1,16 @@
+{
+  "name": "animethreads-cart-service",
+  "version": "1.0.0",
+  "description": "AnimeThreads shopping cart backed by Redis and keyed by user ID.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node src/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.0",
+    "express": "^4.19.0",
+    "ioredis": "^5.3.0",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

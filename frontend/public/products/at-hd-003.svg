@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16130F"/><stop offset="1" stop-color="#0B0A09"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.38" r="0.6">
+      <stop offset="0" stop-color="#FF8C42" stop-opacity="0.28"/><stop offset="1" stop-color="#FF8C42" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#bg)"/>
+  <rect width="600" height="600" fill="url(#glow)"/>
+  <g opacity="0.5">
+    <rect x="-80" y="120" width="760" height="26" fill="#FF8C42" opacity="0.05" transform="rotate(-14 300 300)"/>
+    <rect x="-80" y="330" width="760" height="14" fill="#FF8C42" opacity="0.05" transform="rotate(-14 300 300)"/>
+  </g>
+  <rect x="26" y="26" width="548" height="548" fill="none" stroke="#FF8C42" stroke-opacity="0.35" stroke-width="2"/>
+  <text x="548" y="118" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#FF8C42">ナ</text>
+  <text x="548" y="148" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#FF8C42">ル</text>
+  <text x="548" y="178" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#FF8C42">ト</text>
+  <g>
+  <path d="M 200 416 L 200 316 Q 300 282 400 316 L 400 416 Z" fill="#EA580C"/>
+  <rect x="258" y="278" width="84" height="16" rx="6" fill="#1E3A8A"/>
+  <rect x="281" y="266" width="38" height="20" fill="#F2CFAE"/>
+  <circle cx="300" cy="212" r="60" fill="#F2CFAE"/>
+  <polygon points="203.0,239.5 244.6,216.4 198.0,206.6 244.9,198.1 203.9,173.8 251.0,180.9 220.0,144.7 262.3,166.6 244.6,122.3 277.7,156.6 275.2,109.1 295.4,152.2 308.4,106.3 313.6,153.7 340.6,114.4 330.4,161.0 368.6,132.5 343.9,173.3 389.2,158.6 352.8,189.2 400.4,190.0 356.0,207.2 400.9,223.3 353.3,225.3" fill="#FBBF24"/>
+  <rect x="238" y="184" width="124" height="24" rx="4" fill="#1E3A8A"/>
+  <rect x="280" y="186" width="40" height="20" rx="3" fill="#CBD5E1"/>
+  <circle cx="300" cy="196" r="7" fill="none" stroke="#475569" stroke-width="2.5"/>
+  <line x1="244" y1="232" x2="262" y2="232" stroke="#B45309" stroke-width="2" stroke-linecap="round"/>
+  <line x1="242" y1="240" x2="260" y2="240" stroke="#B45309" stroke-width="2" stroke-linecap="round"/>
+  <line x1="338" y1="232" x2="356" y2="232" stroke="#B45309" stroke-width="2" stroke-linecap="round"/>
+  <line x1="340" y1="240" x2="358" y2="240" stroke="#B45309" stroke-width="2" stroke-linecap="round"/></g>
+  <text x="288" y="462" text-anchor="middle" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="46" font-weight="900" letter-spacing="4" fill="#F5F5F4">NINJA WAY</text>
+  <text x="288" y="500" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="24" font-weight="700" fill="#FF8C42">忍の道</text>
+  <text x="288" y="530" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="4" fill="#A8A29E">THAT IS MY NINJA WAY</text>
+  <text x="288" y="566" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="5" fill="#FF8C42" opacity="0.8">ANIMETHREADS · 武士道</text>
+</svg>

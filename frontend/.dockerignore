@@ -1,0 +1,8 @@
+node_modules
+.next
+frontend
+services/*/node_modules
+services/*/.env
+.git
+.env
+*.log

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16130F"/><stop offset="1" stop-color="#0B0A09"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.38" r="0.6">
+      <stop offset="0" stop-color="#34D399" stop-opacity="0.28"/><stop offset="1" stop-color="#34D399" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#bg)"/>
+  <rect width="600" height="600" fill="url(#glow)"/>
+  <g opacity="0.5">
+    <rect x="-80" y="120" width="760" height="26" fill="#34D399" opacity="0.05" transform="rotate(-14 300 300)"/>
+    <rect x="-80" y="330" width="760" height="14" fill="#34D399" opacity="0.05" transform="rotate(-14 300 300)"/>
+  </g>
+  <rect x="26" y="26" width="548" height="548" fill="none" stroke="#34D399" stroke-opacity="0.35" stroke-width="2"/>
+  <text x="548" y="118" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#34D399">進</text>
+  <text x="548" y="148" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#34D399">撃</text>
+  <text x="548" y="178" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#34D399">の</text>
+  <text x="548" y="208" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#34D399">巨</text>
+  <text x="548" y="238" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#34D399">人</text>
+  <g>
+  <path d="M 192 420 Q 208 296 300 288 Q 392 296 408 420 Z" fill="#14532D"/>
+  <path d="M 205 416 L 205 322 Q 300 288 395 322 L 395 416 Z" fill="#57534E"/>
+  <line x1="252" y1="302" x2="348" y2="380" stroke="#B45309" stroke-width="7" stroke-linecap="round"/>
+  <line x1="348" y1="302" x2="252" y2="380" stroke="#B45309" stroke-width="7" stroke-linecap="round"/>
+  <rect x="281" y="268" width="38" height="22" fill="#F2CFAE"/>
+  <circle cx="300" cy="212" r="60" fill="#F2CFAE"/>
+  <polygon points="204.9,236.9 242.7,214.7 200.0,204.6 242.9,195.8 205.8,172.5 249.3,177.9 221.6,144.0 261.0,163.1 245.7,122.0 276.9,152.8 275.7,109.0 295.3,148.2 308.2,106.3 314.1,149.7 339.8,114.3 331.5,157.3 367.3,132.0 345.5,170.0 387.5,157.6 354.7,186.6 398.4,188.3 358.0,205.2 398.9,221.0 355.2,223.9" fill="#78350F"/></g>
+  <text x="288" y="462" text-anchor="middle" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="46" font-weight="900" letter-spacing="4" fill="#F5F5F4">EREN</text>
+  <text x="288" y="500" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="24" font-weight="700" fill="#34D399">エレン・イェーガー</text>
+  <text x="288" y="530" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="4" fill="#A8A29E">ON THAT DAY</text>
+  <text x="288" y="566" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="5" fill="#34D399" opacity="0.8">ANIMETHREADS · 武士道</text>
+</svg>

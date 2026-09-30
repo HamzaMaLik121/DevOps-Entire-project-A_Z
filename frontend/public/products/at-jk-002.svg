@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16130F"/><stop offset="1" stop-color="#0B0A09"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.38" r="0.6">
+      <stop offset="0" stop-color="#DC2626" stop-opacity="0.28"/><stop offset="1" stop-color="#DC2626" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#bg)"/>
+  <rect width="600" height="600" fill="url(#glow)"/>
+  <g opacity="0.5">
+    <rect x="-80" y="120" width="760" height="26" fill="#DC2626" opacity="0.05" transform="rotate(-14 300 300)"/>
+    <rect x="-80" y="330" width="760" height="14" fill="#DC2626" opacity="0.05" transform="rotate(-14 300 300)"/>
+  </g>
+  <rect x="26" y="26" width="548" height="548" fill="none" stroke="#DC2626" stroke-opacity="0.35" stroke-width="2"/>
+  <text x="548" y="118" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#DC2626">ハ</text>
+  <text x="548" y="148" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#DC2626">ン</text>
+  <text x="548" y="178" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#DC2626">タ</text>
+  <text x="548" y="208" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#DC2626">ー</text>
+  <text x="548" y="238" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#DC2626">×</text>
+  <text x="548" y="268" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#DC2626">ハ</text>
+  <text x="548" y="298" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#DC2626">ン</text>
+  <text x="548" y="328" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#DC2626">タ</text>
+  <text x="548" y="358" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#DC2626">ー</text>
+  <g>
+  <circle cx="300" cy="220" r="46" fill="#0B0A09"/>
+  <circle cx="300" cy="164" r="26" fill="#0B0A09"/>
+  
+    <path d="M 272 196 Q 196 160 176 108" stroke="#0B0A09" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M 328 196 Q 404 160 424 108" stroke="#0B0A09" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M 268 192 Q 182 184 166 138" stroke="#0B0A09" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M 332 192 Q 418 184 434 138" stroke="#0B0A09" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M 264 188 Q 168 208 156 168" stroke="#0B0A09" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M 336 188 Q 432 208 444 168" stroke="#0B0A09" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M 260 184 Q 154 232 146 198" stroke="#0B0A09" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M 340 184 Q 446 232 454 198" stroke="#0B0A09" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <circle cx="288" cy="156" r="5" fill="#DC2626"/><circle cx="312" cy="156" r="5" fill="#DC2626"/></g>
+  <text x="288" y="462" text-anchor="middle" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="46" font-weight="900" letter-spacing="4" fill="#F5F5F4">PHANTOM</text>
+  <text x="288" y="500" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="24" font-weight="700" fill="#DC2626">幻影旅団</text>
+  <text x="288" y="530" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="4" fill="#A8A29E">NUMBER YOURS</text>
+  <text x="288" y="566" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="5" fill="#DC2626" opacity="0.8">ANIMETHREADS · 武士道</text>
+</svg>

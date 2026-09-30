@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16130F"/><stop offset="1" stop-color="#0B0A09"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.38" r="0.6">
+      <stop offset="0" stop-color="#22D3EE" stop-opacity="0.28"/><stop offset="1" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#bg)"/>
+  <rect width="600" height="600" fill="url(#glow)"/>
+  <g opacity="0.5">
+    <rect x="-80" y="120" width="760" height="26" fill="#22D3EE" opacity="0.05" transform="rotate(-14 300 300)"/>
+    <rect x="-80" y="330" width="760" height="14" fill="#22D3EE" opacity="0.05" transform="rotate(-14 300 300)"/>
+  </g>
+  <rect x="26" y="26" width="548" height="548" fill="none" stroke="#22D3EE" stroke-opacity="0.35" stroke-width="2"/>
+  <text x="548" y="118" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#22D3EE">呪</text>
+  <text x="548" y="148" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#22D3EE">術</text>
+  <text x="548" y="178" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#22D3EE">廻</text>
+  <text x="548" y="208" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#22D3EE">戦</text>
+  <g>
+  <path d="M 200 414 L 200 310 Q 300 276 400 310 L 400 414 Z" fill="#111827"/>
+  <rect x="258" y="266" width="84" height="20" rx="6" fill="#1F2937"/>
+  <rect x="281" y="264" width="38" height="22" fill="#F2CFAE"/>
+  <circle cx="300" cy="210" r="62" fill="#F2CFAE"/>
+  <polygon points="193.5,242.6 242.7,216.7 188.0,206.5 242.9,197.8 194.5,170.5 249.3,179.9 212.2,138.5 261.0,165.1 239.2,113.9 276.9,154.8 272.7,99.4 295.3,150.2 309.2,96.4 314.1,151.7 344.6,105.3 331.5,159.3 375.3,125.1 345.5,172.0 398.0,153.8 354.7,188.6 410.2,188.2 358.0,207.2 410.7,224.8 355.2,225.9" fill="#F1F5F9"/>
+  <path d="M 240 196 Q 300 182 360 196 L 360 218 Q 300 232 240 218 Z" fill="#0B0A09"/>
+  <path d="M 252 176 Q 268 160 288 168" stroke="#E2E8F0" stroke-width="5" fill="none" stroke-linecap="round"/></g>
+  <text x="288" y="462" text-anchor="middle" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="46" font-weight="900" letter-spacing="4" fill="#F5F5F4">UNLIMITED</text>
+  <text x="288" y="500" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="24" font-weight="700" fill="#22D3EE">無量空処</text>
+  <text x="288" y="530" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="4" fill="#A8A29E">DOMAIN EXPANSION</text>
+  <text x="288" y="566" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="5" fill="#22D3EE" opacity="0.8">ANIMETHREADS · 武士道</text>
+</svg>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16130F"/><stop offset="1" stop-color="#0B0A09"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.38" r="0.6">
+      <stop offset="0" stop-color="#F97316" stop-opacity="0.28"/><stop offset="1" stop-color="#F97316" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="600" height="600" fill="url(#bg)"/>
+  <rect width="600" height="600" fill="url(#glow)"/>
+  <g opacity="0.5">
+    <rect x="-80" y="120" width="760" height="26" fill="#F97316" opacity="0.05" transform="rotate(-14 300 300)"/>
+    <rect x="-80" y="330" width="760" height="14" fill="#F97316" opacity="0.05" transform="rotate(-14 300 300)"/>
+  </g>
+  <rect x="26" y="26" width="548" height="548" fill="none" stroke="#F97316" stroke-opacity="0.35" stroke-width="2"/>
+  <text x="548" y="118" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#F97316">フ</text>
+  <text x="548" y="148" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#F97316">ェ</text>
+  <text x="548" y="178" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#F97316">ア</text>
+  <text x="548" y="208" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#F97316">リ</text>
+  <text x="548" y="238" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#F97316">ー</text>
+  <text x="548" y="268" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#F97316">テ</text>
+  <text x="548" y="298" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#F97316">イ</text>
+  <text x="548" y="328" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="22" font-weight="700" fill="#F97316">ル</text>
+  <g>
+  <path d="M 252 130 Q 268 240 300 330 Q 292 220 282 130 Z" fill="#F97316"/>
+  <path d="M 348 130 Q 332 240 300 330 Q 308 220 318 130 Z" fill="#FCD34D"/>
+  <path d="M 252 130 Q 300 108 348 130" stroke="#F97316" stroke-width="8" fill="none"/></g>
+  <text x="288" y="462" text-anchor="middle" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="46" font-weight="900" letter-spacing="4" fill="#F5F5F4">GUILD</text>
+  <text x="288" y="500" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif" font-size="24" font-weight="700" fill="#F97316">牙</text>
+  <text x="288" y="530" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="4" fill="#A8A29E">WORN BY THE BRAVE</text>
+  <text x="288" y="566" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="5" fill="#F97316" opacity="0.8">ANIMETHREADS · 武士道</text>
+</svg>

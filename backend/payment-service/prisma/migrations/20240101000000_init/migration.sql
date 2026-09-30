@@ -1,0 +1,9 @@
+CREATE TABLE "Payment" (
+    "id" SERIAL PRIMARY KEY,
+    "orderId" INTEGER NOT NULL UNIQUE,
+    "userId" INTEGER NOT NULL,
+    "amount" DOUBLE PRECISION NOT NULL,
+    "status" TEXT NOT NULL,
+    "method" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
