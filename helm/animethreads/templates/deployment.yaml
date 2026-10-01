@@ -1,0 +1,88 @@
+{{- include "at.guard" . -}}
+{{- range $name, $svc := .Values.services }}
+{{- if $svc.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "at.labels" (dict "name" $name "root" $) | nindent 4 }}
+spec:
+  {{- if not (and $.Values.autoscaling.hpa.enabled $svc.hpa) }}
+  replicas: {{ $svc.replicas }}
+  {{- end }}
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      {{- include "at.selectorLabels" (dict "name" $name "root" $) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "at.labels" (dict "name" $name "root" $) | nindent 8 }}
+      annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") $ | sha256sum }}
+    spec:
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      {{- with $.Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- include "at.scheduling" (dict "root" $ "svc" $svc "name" $name) | nindent 6 }}
+      {{- if $svc.waitFor }}
+      initContainers:
+        {{- include "at.waitFor" $svc.waitFor | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ $name }}
+          image: {{ include "at.image" (dict "root" $ "name" $name) }}
+          imagePullPolicy: {{ $.Values.global.imagePullPolicy }}
+          securityContext:
+            allowPrivilegeEscalation: false
+          ports:
+            - name: http
+              containerPort: {{ $svc.port }}
+          env:
+            - name: NODE_ENV
+              value: production
+            {{- if $svc.jwt }}
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "at.secretName" $ }}
+                  key: JWT_SECRET
+            {{- end }}
+            {{- if $svc.redis }}
+            - name: REDIS_URL
+              value: redis://redis:6379
+            {{- end }}
+            {{- if $svc.db }}
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "at.secretName" $ }}
+                  key: DATABASE_URL_{{ upper $svc.db }}
+            {{- end }}
+            {{- range $k, $v := $svc.env }}
+            - name: {{ $k }}
+              value: {{ $v | quote }}
+            {{- end }}
+          startupProbe:
+            {{- include "at.probe" (dict "p" $svc.probe "port" $svc.port "delay" 5) | nindent 12 }}
+          readinessProbe:
+            {{- include "at.probe" (dict "p" $svc.probe "port" $svc.port "delay" 5) | nindent 12 }}
+          livenessProbe:
+            {{- include "at.probe" (dict "p" $svc.probe "port" $svc.port "delay" 30) | nindent 12 }}
+          resources:
+            {{- toYaml (default $.Values.global.resources $svc.resources) | nindent 12 }}
+{{- end }}
+{{- end }}

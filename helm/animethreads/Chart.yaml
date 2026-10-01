@@ -1,0 +1,6 @@
+apiVersion: v2
+name: animethreads
+description: AnimeThreads - Next.js frontend + 8 Node microservices + Postgres + Redis
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

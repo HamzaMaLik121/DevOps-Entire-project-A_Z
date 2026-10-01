@@ -1,0 +1,210 @@
+global:
+  imageRegistry: docker.io/hamzamalik1   # CHANGE ME
+  imageTag: "latest"
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: []            # e.g. [{name: regcred}]
+
+  # ---- node placement (taints / tolerations) ----
+  # Pin everything to labelled nodes and tolerate a dedicated taint:
+  #   kubectl label node <node> workload=animethreads
+  #   kubectl taint node <node> dedicated=animethreads:NoSchedule
+  nodeSelector: {}
+  #  workload: animethreads
+  tolerations: []
+  #  - key: dedicated
+  #    operator: Equal
+  #    value: animethreads
+  #    effect: NoSchedule
+  #  - key: node-role.kubernetes.io/control-plane   # needed on a single-node kubeadm cluster
+  #    operator: Exists
+  #    effect: NoSchedule
+
+  spread: true                    # soft pod anti-affinity + topologySpreadConstraints
+
+  resources:                      # default for every service (HPA needs requests!)
+    requests: { cpu: 50m, memory: 96Mi }
+    limits:   { cpu: 500m, memory: 384Mi }
+
+secrets:
+  existingSecret: ""              # use your own Secret (needs JWT_SECRET, POSTGRES_PASSWORD, DATABASE_URL_<SCHEMA>)
+  jwtSecret: change-me-in-prod
+  postgresPassword: postgres
+
+postgres:
+  enabled: true
+  image: postgres:16-alpine
+  user: postgres
+  database: animethreads
+  schemas: [auth, product, order, payment, inventory]
+  persistence:
+    enabled: false                # true needs a StorageClass (kubeadm has none by default)
+    size: 5Gi
+    storageClass: ""
+  resources:
+    requests: { cpu: 100m, memory: 256Mi }
+    limits:   { cpu: 1000m, memory: 1Gi }
+  nodeSelector: {}
+  tolerations: []
+
+redis:
+  enabled: true
+  image: redis:7-alpine
+  resources:
+    requests: { cpu: 50m, memory: 64Mi }
+    limits:   { cpu: 300m, memory: 256Mi }
+  nodeSelector: {}
+  tolerations: []
+
+autoscaling:
+  hpa:
+    enabled: true                 # needs metrics-server
+    cpu: 70
+    memory: 80
+  vpa:
+    enabled: false                # needs VPA CRDs installed
+    updateMode: "Off"             # Off | Initial | Auto. Forced to Off where an HPA targets the same Deployment
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    web: animethreads.local
+    api: api.animethreads.local
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 10m
+
+networkPolicy:
+  enabled: false                  # needs a CNI that enforces policies (Calico/Cilium)
+  ingressControllerNamespace: ingress-nginx
+
+nodeExporter:                     # DaemonSet: one pod per node, tolerates all taints
+  enabled: true
+  image: quay.io/prometheus/node-exporter:v1.8.2
+  port: 9100
+
+limitRange:
+  enabled: true
+resourceQuota:
+  enabled: false
+  hard:
+    requests.cpu: "4"
+    requests.memory: 8Gi
+    limits.cpu: "8"
+    limits.memory: 16Gi
+    pods: "60"
+
+# ---------------------------------------------------------------------------
+# Workloads. image = <registry>/animethreads-<key>:<tag>
+# db: prisma schema name (also creates DATABASE_URL + a migration Job)
+# ---------------------------------------------------------------------------
+services:
+  api-gateway:
+    enabled: true
+    port: 8000
+    replicas: 2
+    hpa: { min: 2, max: 6 }
+    probe: { type: http, path: /health }
+    redis: false
+    jwt: false
+    waitFor: []
+    env:
+      AUTH_SERVICE_URL: http://auth-service:3001
+      PRODUCT_SERVICE_URL: http://product-service:3002
+      CART_SERVICE_URL: http://cart-service:3003
+      ORDER_SERVICE_URL: http://order-service:3004
+      PAYMENT_SERVICE_URL: http://payment-service:3005
+      INVENTORY_SERVICE_URL: http://inventory-service:3006
+
+  auth-service:
+    enabled: true
+    port: 3001
+    replicas: 2
+    hpa: { min: 2, max: 5 }
+    probe: { type: http, path: "/auth/validate?token=x" }
+    db: auth
+    redis: true
+    jwt: true
+    waitFor: ["postgres:5432", "redis:6379"]
+    env: {}
+
+  product-service:
+    enabled: true
+    port: 3002
+    replicas: 2
+    hpa: { min: 2, max: 5 }
+    probe: { type: http, path: /products/categories }
+    db: product
+    redis: false
+    jwt: false
+    waitFor: ["postgres:5432"]
+    env: {}
+
+  cart-service:
+    enabled: true
+    port: 3003
+    replicas: 2
+    hpa: { min: 2, max: 5 }
+    probe: { type: tcp }
+    redis: true
+    jwt: true
+    waitFor: ["redis:6379"]
+    env: {}
+
+  order-service:
+    enabled: true
+    port: 3004
+    replicas: 2
+    hpa: { min: 2, max: 5 }
+    probe: { type: tcp }
+    db: order
+    redis: true
+    jwt: true
+    waitFor: ["postgres:5432", "redis:6379"]
+    env: {}
+
+  payment-service:
+    enabled: true
+    port: 3005
+    replicas: 2
+    hpa: { min: 2, max: 5 }
+    probe: { type: tcp }
+    db: payment
+    redis: true
+    jwt: true
+    waitFor: ["postgres:5432", "redis:6379"]
+    env: {}
+
+  inventory-service:
+    enabled: true
+    port: 3006
+    replicas: 2
+    hpa: { min: 2, max: 5 }
+    probe: { type: http, path: /health }
+    db: inventory
+    redis: true
+    jwt: true
+    waitFor: ["postgres:5432", "redis:6379"]
+    env: {}
+
+  notification-service:
+    enabled: true
+    port: 3007
+    replicas: 1
+    hpa: { min: 1, max: 3 }
+    probe: { type: tcp }
+    redis: true
+    jwt: true
+    waitFor: ["redis:6379"]
+    env: {}
+
+  web:
+    enabled: true
+    port: 3000
+    replicas: 2
+    hpa: { min: 2, max: 6 }
+    probe: { type: http, path: /api/health }
+    redis: false
+    jwt: false
+    waitFor: []
+    env:
+      HOSTNAME: "0.0.0.0"

@@ -1,0 +1,12 @@
+AnimeThreads installed in namespace: {{ .Release.Namespace }}
+
+  kubectl -n {{ .Release.Namespace }} get pods,svc,hpa,ingress
+{{- if .Values.ingress.enabled }}
+
+Web: http://{{ .Values.ingress.hosts.web }}
+API: http://{{ .Values.ingress.hosts.api }}
+{{- end }}
+{{- if and .Values.autoscaling.vpa.enabled (not (.Capabilities.APIVersions.Has "autoscaling.k8s.io/v1/VerticalPodAutoscaler")) }}
+
+WARNING: VPA enabled but the VPA CRDs are not installed - VPA objects were skipped.
+{{- end }}
