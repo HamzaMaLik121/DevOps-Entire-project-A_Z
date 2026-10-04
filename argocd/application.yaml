@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: animethreads
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/HamzaMaLik121/DevOps-Entire-project-A_Z.git   # confirm this is your repo URL
+    targetRevision: main
+    path: helm/animethreads
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: animethreads
+  syncPolicy:
+    automated:
+      prune: true        # delete resources removed from git
+      selfHeal: true     # undo manual kubectl changes
+    syncOptions:
+      - CreateNamespace=true

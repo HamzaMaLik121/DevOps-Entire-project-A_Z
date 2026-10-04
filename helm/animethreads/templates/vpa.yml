@@ -1,39 +1,53 @@
-{{- if .Values.autoscaling.hpa.enabled }}
+{{- if and .Values.autoscaling.vpa.enabled (.Capabilities.APIVersions.Has "autoscaling.k8s.io/v1/VerticalPodAutoscaler") }}
 {{- range $name, $svc := .Values.services }}
-{{- if and $svc.enabled $svc.hpa }}
+{{- if $svc.enabled }}
 ---
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
 metadata:
   name: {{ $name }}
   namespace: {{ $.Release.Namespace }}
-  labels:
-    {{- include "at.labels" (dict "name" $name "root" $) | nindent 4 }}
 spec:
-  scaleTargetRef:
+  targetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ $name }}
-  minReplicas: {{ $svc.hpa.min }}
-  maxReplicas: {{ $svc.hpa.max }}
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: {{ $.Values.autoscaling.hpa.cpu }}
-    - type: Resource
-      resource:
-        name: memory
-        target:
-          type: Utilization
-          averageUtilization: {{ $.Values.autoscaling.hpa.memory }}
-  behavior:
-    scaleUp:
-      stabilizationWindowSeconds: 30
-    scaleDown:
-      stabilizationWindowSeconds: 300
+  updatePolicy:
+    {{- if and $.Values.autoscaling.hpa.enabled $svc.hpa }}
+    updateMode: "Off"   # HPA already scales on CPU/memory; VPA only recommends
+    {{- else }}
+    updateMode: {{ $.Values.autoscaling.vpa.updateMode | quote }}
+    {{- end }}
 {{- end }}
+{{- end }}
+{{- if .Values.postgres.enabled }}
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: postgres
+  namespace: {{ .Release.Namespace }}
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: StatefulSet
+    name: postgres
+  updatePolicy:
+    updateMode: "Off"
+{{- end }}
+{{- if .Values.redis.enabled }}
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: redis
+  namespace: {{ .Release.Namespace }}
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: redis
+  updatePolicy:
+    updateMode: "Off"
 {{- end }}
 {{- end }}
