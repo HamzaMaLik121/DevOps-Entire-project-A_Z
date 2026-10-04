@@ -10,7 +10,7 @@ grafana:
     size: 2Gi
   resources:
     requests: { cpu: 50m, memory: 256Mi }
-    limits:   { memory: 512Mi }
+    limits:   { memory: 768Mi }          # was 384Mi, usage reached ~357Mi
 
 prometheus:
   prometheusSpec:
@@ -19,8 +19,8 @@ prometheus:
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
     resources:
-      requests: { cpu: 100m, memory: 400Mi }
-      limits:   { memory: 1Gi }
+      requests: { cpu: 100m, memory: 512Mi }
+      limits:   { memory: 1536Mi }       # was 1Gi, grows as data accumulates
     storageSpec:
       volumeClaimTemplate:
         spec:
