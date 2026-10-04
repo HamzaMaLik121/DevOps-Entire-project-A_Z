@@ -1,0 +1,47 @@
+# Alertmanager off: nothing to notify yet, saves memory
+alertmanager:
+  enabled: false
+
+grafana:
+  enabled: true
+  defaultDashboardsTimezone: browser
+  persistence:
+    enabled: true
+    size: 2Gi
+  resources:
+    requests: { cpu: 50m, memory: 128Mi }
+    limits:   { memory: 384Mi }
+
+prometheus:
+  prometheusSpec:
+    retention: 3d
+    # pick up ServiceMonitors/PodMonitors from any namespace, not only this release
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    resources:
+      requests: { cpu: 100m, memory: 400Mi }
+      limits:   { memory: 1Gi }
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 5Gi
+
+# kind runs these control-plane components bound to localhost, so scraping them
+# only produces "target down" noise
+kubeEtcd:              { enabled: false }
+kubeScheduler:         { enabled: false }
+kubeControllerManager: { enabled: false }
+kubeProxy:             { enabled: false }
+
+prometheus-node-exporter:
+  # your animethreads chart already runs a node-exporter on hostPort 9100,
+  # so move this one to 9101 to avoid a port clash
+  service:
+    port: 9101
+    targetPort: 9101
+  # kind nodes don't support the default root-fs mount propagation
+  hostRootFsMount:
+    enabled: false
