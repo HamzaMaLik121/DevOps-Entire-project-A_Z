@@ -38,9 +38,25 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- include "at.scheduling" (dict "root" $ "svc" $svc "name" $name) | nindent 6 }}
-      {{- if $svc.waitFor }}
+      {{- if or $svc.waitFor $svc.db }}
       initContainers:
+        {{- if $svc.waitFor }}
         {{- include "at.waitFor" $svc.waitFor | nindent 8 }}
+        {{- end }}
+        {{- if $svc.db }}
+        - name: migrate
+          image: {{ include "at.image" (dict "root" $ "name" $name "suffix" "-migrator") }}
+          imagePullPolicy: {{ $.Values.global.imagePullPolicy }}
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "at.secretName" $ }}
+                  key: DATABASE_URL_{{ upper $svc.db }}
+          resources:
+            requests: { cpu: 50m, memory: 128Mi }
+            limits:   { cpu: 500m, memory: 512Mi }
+        {{- end }}
       {{- end }}
       containers:
         - name: {{ $name }}

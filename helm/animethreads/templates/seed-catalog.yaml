@@ -1,0 +1,55 @@
+{{- if .Values.seed.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: seed-catalog-script
+  namespace: {{ .Release.Namespace }}
+data:
+  reseed-catalog.js: |
+{{ .Files.Get "files/reseed-catalog.js" | indent 4 }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: seed-catalog
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 3
+  activeDeadlineSeconds: 900
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: seed
+          image: {{ .Values.seed.image }}
+          env:
+            - name: API_URL
+              value: http://api-gateway:8000
+          command: ["sh", "-c"]
+          args:
+            - |
+              set -e
+              until wget -qO- "$API_URL/health" >/dev/null 2>&1; do echo "waiting for api-gateway"; sleep 3; done
+              until wget -qO- "$API_URL/products?limit=100" >/dev/null 2>&1; do echo "waiting for product-service"; sleep 3; done
+              if wget -qO- "$API_URL/products?limit=100" | grep -q '"imageUrl":"/products/'; then
+                echo "catalog already seeded - skipping"
+                exit 0
+              fi
+              mkdir -p /tmp/app/scripts
+              cp /scripts/reseed-catalog.js /tmp/app/scripts/
+              node /tmp/app/scripts/reseed-catalog.js
+          resources:
+            requests: { cpu: 50m, memory: 64Mi }
+            limits:   { cpu: 500m, memory: 256Mi }
+          volumeMounts:
+            - name: script
+              mountPath: /scripts
+      volumes:
+        - name: script
+          configMap:
+            name: seed-catalog-script
+{{- end }}

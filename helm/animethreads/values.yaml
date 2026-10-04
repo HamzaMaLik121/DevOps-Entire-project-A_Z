@@ -37,7 +37,7 @@ postgres:
   database: animethreads
   schemas: [auth, product, order, payment, inventory]
   persistence:
-    enabled: false                # true needs a StorageClass (kubeadm has none by default)
+    enabled: true                # true needs a StorageClass (kubeadm has none by default)
     size: 5Gi
     storageClass: ""
   resources:
@@ -208,3 +208,7 @@ services:
     waitFor: []
     env:
       HOSTNAME: "0.0.0.0"
+
+seed:
+  enabled: true
+  image: node:22-alpine
