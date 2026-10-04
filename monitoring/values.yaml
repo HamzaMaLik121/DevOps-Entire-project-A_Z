@@ -9,8 +9,8 @@ grafana:
     enabled: true
     size: 2Gi
   resources:
-    requests: { cpu: 50m, memory: 256Mi }
-    limits:   { memory: 768Mi }          # was 384Mi, usage reached ~357Mi
+    requests: { cpu: 50m, memory: 400Mi }
+    limits:   { memory: 1Gi }          # was 384Mi, usage reached ~357Mi
 
 prometheus:
   prometheusSpec:
