@@ -148,6 +148,7 @@ services:
     jwt: true
     waitFor: ["postgres:5432", "redis:6379"]
     env: {}
+    tag: c8ebf16
   payment-service:
     enabled: true
     port: 3005
