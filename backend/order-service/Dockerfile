@@ -32,6 +32,7 @@ COPY order-service/src ./src
 COPY shared /srv/shared
 RUN ln -s order-service/node_modules /srv/node_modules \
 	&& apk add --no-cache openssl
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/yarn /usr/local/bin/yarnpkg /opt/yarn-*
 EXPOSE 3004
 USER node
 CMD ["node", "src/index.js"]

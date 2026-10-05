@@ -14,6 +14,7 @@ COPY --from=deps /deps/node_modules ./node_modules
 COPY api-gateway/package.json ./
 COPY api-gateway/src ./src
 COPY shared /srv/shared
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/yarn /usr/local/bin/yarnpkg /opt/yarn-*
 EXPOSE 8000
 USER node
 CMD ["node", "src/index.js"]

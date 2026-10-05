@@ -15,6 +15,7 @@ COPY cart-service/package.json ./
 COPY cart-service/src ./src
 COPY shared /srv/shared
 RUN ln -s cart-service/node_modules /srv/node_modules
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/yarn /usr/local/bin/yarnpkg /opt/yarn-*
 EXPOSE 3003
 USER node
 CMD ["node", "src/index.js"]

@@ -102,7 +102,7 @@ jobs:
           scanners: vuln,secret
           severity: CRITICAL,HIGH
           ignore-unfixed: true
-          exit-code: "0"
+          exit-code: "1"
           format: table
 
       - name: Build migrator image (local only)

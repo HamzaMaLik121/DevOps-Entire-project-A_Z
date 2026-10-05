@@ -27,6 +27,7 @@ COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static
 # Product artwork is served statically by the app
 COPY --from=build /app/public ./public
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/yarn /usr/local/bin/yarnpkg /opt/yarn-*
 EXPOSE 3000
 USER node
 CMD ["node", "server.js"]

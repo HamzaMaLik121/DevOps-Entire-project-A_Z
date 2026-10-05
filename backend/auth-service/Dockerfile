@@ -36,6 +36,7 @@ COPY shared /srv/shared
 # eventBus.js resolves deps via /srv/node_modules — symlink to ours
 RUN ln -s auth-service/node_modules /srv/node_modules \
 	&& apk add --no-cache openssl
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/yarn /usr/local/bin/yarnpkg /opt/yarn-*
 EXPOSE 3001
 USER node
 CMD ["node", "src/index.js"]
