@@ -196,6 +196,7 @@ services:
     waitFor: []
     env:
       HOSTNAME: "0.0.0.0"
+    tag: c8ebf16
 seed:
   enabled: true
   image: node:22-alpine
