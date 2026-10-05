@@ -1,4 +1,5 @@
-name: web
+name: Frontend (Web) Pipeline
+run-name: "Frontend (Web) Pipeline - ${{ github.event.head_commit.message || github.event.pull_request.title }}"
 
 on:
   push:
