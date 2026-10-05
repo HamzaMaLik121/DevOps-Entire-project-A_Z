@@ -1,0 +1,28 @@
+name: api-gateway
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/api-gateway/**"
+      - "backend/shared/**"
+      - ".github/workflows/api-gateway.yml"
+  pull_request:
+    paths:
+      - "backend/api-gateway/**"
+      - "backend/shared/**"
+      - ".github/workflows/api-gateway.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_build-service.yml
+    with:
+      service: api-gateway
+      context: backend
+      dockerfile: backend/api-gateway/Dockerfile
+      target: "runtime"
+      migrator: false
+    secrets: inherit

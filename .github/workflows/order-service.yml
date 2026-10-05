@@ -1,0 +1,28 @@
+name: order-service
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/order-service/**"
+      - "backend/shared/**"
+      - ".github/workflows/order-service.yml"
+  pull_request:
+    paths:
+      - "backend/order-service/**"
+      - "backend/shared/**"
+      - ".github/workflows/order-service.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_build-service.yml
+    with:
+      service: order-service
+      context: backend
+      dockerfile: backend/order-service/Dockerfile
+      target: "runtime"
+      migrator: true
+    secrets: inherit

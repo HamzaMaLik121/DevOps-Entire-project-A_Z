@@ -9,7 +9,7 @@
 {{- end -}}
 
 {{- define "at.image" -}}
-{{ .root.Values.global.imageRegistry }}/animethreads-{{ .name }}{{ .suffix | default "" }}:{{ .root.Values.global.imageTag }}
+{{ .root.Values.global.imageRegistry }}/animethreads-{{ .name }}{{ .suffix | default "" }}:{{ .tag | default .root.Values.global.imageTag }}
 {{- end -}}
 
 {{- define "at.selectorLabels" -}}

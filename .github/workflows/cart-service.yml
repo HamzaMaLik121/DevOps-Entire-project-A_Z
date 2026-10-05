@@ -1,0 +1,28 @@
+name: cart-service
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/cart-service/**"
+      - "backend/shared/**"
+      - ".github/workflows/cart-service.yml"
+  pull_request:
+    paths:
+      - "backend/cart-service/**"
+      - "backend/shared/**"
+      - ".github/workflows/cart-service.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_build-service.yml
+    with:
+      service: cart-service
+      context: backend
+      dockerfile: backend/cart-service/Dockerfile
+      target: ""
+      migrator: false
+    secrets: inherit

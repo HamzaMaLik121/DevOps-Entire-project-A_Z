@@ -1,0 +1,28 @@
+name: product-service
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/product-service/**"
+      - "backend/shared/**"
+      - ".github/workflows/product-service.yml"
+  pull_request:
+    paths:
+      - "backend/product-service/**"
+      - "backend/shared/**"
+      - ".github/workflows/product-service.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_build-service.yml
+    with:
+      service: product-service
+      context: backend
+      dockerfile: backend/product-service/Dockerfile
+      target: "runtime"
+      migrator: true
+    secrets: inherit

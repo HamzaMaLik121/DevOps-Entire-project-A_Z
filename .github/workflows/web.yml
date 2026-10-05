@@ -1,0 +1,28 @@
+name: web
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+
+      - ".github/workflows/web.yml"
+  pull_request:
+    paths:
+      - "frontend/**"
+
+      - ".github/workflows/web.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_build-service.yml
+    with:
+      service: web
+      context: frontend
+      dockerfile: frontend/Dockerfile
+      target: "runtime"
+      migrator: false
+    secrets: inherit

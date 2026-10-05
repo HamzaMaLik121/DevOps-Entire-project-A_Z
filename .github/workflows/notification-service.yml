@@ -1,0 +1,28 @@
+name: notification-service
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/notification-service/**"
+      - "backend/shared/**"
+      - ".github/workflows/notification-service.yml"
+  pull_request:
+    paths:
+      - "backend/notification-service/**"
+      - "backend/shared/**"
+      - ".github/workflows/notification-service.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  ci:
+    uses: ./.github/workflows/_build-service.yml
+    with:
+      service: notification-service
+      context: backend
+      dockerfile: backend/notification-service/Dockerfile
+      target: ""
+      migrator: false
+    secrets: inherit

@@ -1,0 +1,162 @@
+name: build-service
+
+on:
+  workflow_call:
+    inputs:
+      service:    { type: string,  required: true }
+      context:    { type: string,  required: true }
+      dockerfile: { type: string,  required: true }
+      target:     { type: string,  default: "" }
+      migrator:   { type: boolean, default: false }
+
+env:
+  REGISTRY: docker.io/hamzamalik1
+  SERVICE_DIR: ${{ inputs.context == 'frontend' && 'frontend' || format('backend/{0}', inputs.service) }}
+
+jobs:
+  # ---------- 1. OWASP Dependency-Check ----------
+  dependency-check:
+    name: OWASP Dependency-Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan dependencies
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: ${{ inputs.service }}
+          path: ${{ env.SERVICE_DIR }}
+          format: HTML
+          out: reports
+          args: >
+            --failOnCVSS 9
+            --nvdApiKey ${{ secrets.NVD_API_KEY }}
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-${{ inputs.service }}
+          path: reports
+
+  # ---------- 2. SonarQube ----------
+  sonarqube:
+    name: SonarQube analysis
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan and wait for quality gate
+        uses: SonarSource/sonarqube-scan-action@v8
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          projectBaseDir: ${{ env.SERVICE_DIR }}
+          args: >
+            -Dsonar.projectKey=${{ vars.SONAR_ORGANIZATION }}_animethreads-${{ inputs.service }}
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.qualitygate.wait=false
+
+  # ---------- 3. Build, Trivy scan, push ----------
+  build-scan-push:
+    name: Build, Trivy scan, push
+    needs: [dependency-check, sonarqube]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      tag: ${{ steps.vars.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: vars
+        run: |
+          echo "tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+          echo "image=${REGISTRY}/animethreads-${{ inputs.service }}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build image (local only)
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ inputs.context }}
+          file: ${{ inputs.dockerfile }}
+          target: ${{ inputs.target }}
+          load: true
+          push: false
+          tags: ${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.tag }}
+          cache-from: type=gha,scope=${{ inputs.service }}
+          cache-to: type=gha,mode=max,scope=${{ inputs.service }}
+
+      - name: Trivy image scan
+        uses: aquasecurity/trivy-action@0.36.0
+        with:
+          image-ref: ${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.tag }}
+          scanners: vuln,secret
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "1"
+          format: table
+
+      - name: Build migrator image (local only)
+        if: inputs.migrator
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ inputs.context }}
+          file: ${{ inputs.dockerfile }}
+          target: migrator
+          load: true
+          push: false
+          tags: ${{ steps.vars.outputs.image }}-migrator:${{ steps.vars.outputs.tag }}
+          cache-from: type=gha,scope=${{ inputs.service }}-migrator
+          cache-to: type=gha,mode=max,scope=${{ inputs.service }}-migrator
+
+      - name: Log in to Docker Hub
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push images
+        if: github.event_name == 'push'
+        run: |
+          docker push "${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.tag }}"
+          if [ "${{ inputs.migrator }}" = "true" ]; then
+            docker push "${{ steps.vars.outputs.image }}-migrator:${{ steps.vars.outputs.tag }}"
+          fi
+
+  # ---------- 4. GitOps: update the tag ----------
+  update-gitops:
+    name: Update image tag in git
+    needs: build-scan-push
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set the new image tag (retries if another service pushed first)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for i in 1 2 3 4 5 6; do
+            git fetch origin main
+            git reset --hard origin/main
+            yq -i '.services["${{ inputs.service }}"].tag = "${{ needs.build-scan-push.outputs.tag }}"' helm/animethreads/values.yaml
+            git add helm/animethreads/values.yaml
+            git commit -m "ci: deploy ${{ inputs.service }} ${{ needs.build-scan-push.outputs.tag }}" || exit 0
+            git push origin main && exit 0
+            sleep $((RANDOM % 8 + 3))
+          done
+          echo "could not push the tag update"; exit 1
