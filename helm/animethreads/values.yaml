@@ -125,6 +125,7 @@ services:
     jwt: false
     waitFor: ["postgres:5432"]
     env: {}
+    tag: c8ebf16
   cart-service:
     enabled: true
     port: 3003
