@@ -185,7 +185,7 @@ services:
     jwt: true
     waitFor: ["redis:6379"]
     env: {}
-    tag: 8393f1d
+    tag: 7b25a29
   web:
     enabled: true
     port: 3000
