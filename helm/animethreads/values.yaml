@@ -162,7 +162,7 @@ services:
     jwt: true
     waitFor: ["postgres:5432", "redis:6379"]
     env: {}
-    tag: 8393f1d
+    tag: 7b25a29
   inventory-service:
     enabled: true
     port: 3006
