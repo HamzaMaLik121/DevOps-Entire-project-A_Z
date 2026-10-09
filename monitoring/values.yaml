@@ -8,6 +8,7 @@ grafana:
   persistence:
     enabled: true
     size: 2Gi
+    storageClassName: gp3
   resources:
     requests: { cpu: 50m, memory: 400Mi }
     limits:   { memory: 1Gi }          # was 384Mi, usage reached ~357Mi
@@ -24,6 +25,7 @@ prometheus:
     storageSpec:
       volumeClaimTemplate:
         spec:
+          storageClassName: gp3
           accessModes: ["ReadWriteOnce"]
           resources:
             requests:

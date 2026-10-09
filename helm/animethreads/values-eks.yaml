@@ -1,0 +1,29 @@
+# Overrides for the EKS deployment (loaded after values.yaml by the ArgoCD Application).
+
+# Credentials come from a Secret that Terraform creates (apps.tf), built from the real RDS password.
+secrets:
+  existingSecret: animethreads-secrets
+
+# RDS replaces the in-cluster Postgres. Terraform creates a Service named `postgres`
+# (type ExternalName -> RDS endpoint), so every postgres:5432 URL and wait-postgres init
+# container keeps working unchanged.
+postgres:
+  enabled: false
+
+# AWS Load Balancer Controller creates one internet-facing ALB across both public subnets.
+# No hostname: you open the ALB's DNS name directly. Only `web` is public, and the
+# api-gateway stays private (the web app proxies /api to it inside the cluster).
+ingress:
+  enabled: true
+  className: alb
+  hosts:
+    web: ""
+    api: ""
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: null   # remove the kind-only annotation
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+    alb.ingress.kubernetes.io/healthcheck-path: /api/health
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: "15"
+    alb.ingress.kubernetes.io/healthy-threshold-count: "2"
