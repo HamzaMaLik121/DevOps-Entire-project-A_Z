@@ -1,7 +1,54 @@
 dex:
   enabled: false
-notifications:
-  enabled: false
+
 configs:
   params:
     server.insecure: true
+
+notifications:
+  enabled: true
+
+  # Secret is created manually (not in git), see kubectl command below:
+  # kubectl -n argocd create secret generic argocd-notifications-secret \
+  #   --from-literal=email-username=YOUR_EMAIL@gmail.com \
+  #   --from-literal=email-password=YOUR_GMAIL_APP_PASSWORD
+  secret:
+    create: false
+
+  notifiers:
+    service.email: |
+      host: smtp.gmail.com
+      port: 465
+      from: $email-username
+      username: $email-username
+      password: $email-password
+
+  triggers:
+    trigger.on-deployed: |
+      - when: app.status.operationState != nil and app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
+        oncePer: app.status.sync.revision
+        send: [app-deployed]
+    trigger.on-sync-failed: |
+      - when: app.status.operationState != nil and app.status.operationState.phase in ['Error', 'Failed']
+        send: [app-failed]
+    trigger.on-health-degraded: |
+      - when: app.status.health.status == 'Degraded'
+        send: [app-failed]
+
+  templates:
+    template.app-deployed: |
+      email:
+        subject: "Deployed {{.app.metadata.name}} ({{.app.status.sync.revision | trunc 7}})"
+      message: "{{.app.metadata.name}} is synced and healthy."
+    template.app-failed: |
+      email:
+        subject: "Problem with {{.app.metadata.name}}: {{.app.status.health.status}}"
+      message: "Sync: {{.app.status.sync.status}}, health: {{.app.status.health.status}}. Check ArgoCD."
+
+  subscriptions:
+    - recipients:
+        - email:YOUR_EMAIL@gmail.com
+      triggers:
+        - on-deployed
+        - on-sync-failed
+        - on-health-degraded
